@@ -1,8 +1,20 @@
 # Paper2Project
 
-**Paper2Project** turns a machine learning research paper PDF into a structured, editable, reproducible starter project with **PyTorch code** and a **Google Colab notebook**.
+**Paper2Project** converts a machine learning research paper PDF into a structured, editable, reproducible starter project with **PyTorch code** and a **Google Colab notebook**.
 
-The goal is not blind one-shot automation. The goal is a controllable system that helps you move from **paper -> pipeline -> decisions -> code -> notebook** with visibility at every step.
+It is built for the real paper-to-implementation workflow:
+
+**upload paper -> inspect extracted pipeline -> edit decisions -> generate code -> run notebook**
+
+## UI Preview
+
+The app now includes a simple workflow UI for uploads, progress tracking, agent trace inspection, decision editing, and artifact downloads.
+
+![Paper2Project dashboard](docs/images/ui-dashboard.png)
+
+![Paper2Project workflow artifacts](docs/images/ui-trace.png)
+
+![Paper2Project agent trace](docs/images/ui-agent-trace.png)
 
 ## What It Does
 
@@ -29,24 +41,24 @@ Generated artifacts include:
 
 Research papers are rarely implementation-ready. They often leave gaps around preprocessing, hyperparameters, dataset availability, evaluation details, or engineering structure.
 
-Paper2Project is designed for the real engineering workflow:
+Paper2Project is designed to bridge that gap by making every stage explicit:
 
-- extract what the paper clearly says
-- mark what is assumed
-- let the user change important decisions
-- generate a runnable baseline
-- preserve enough structure to improve it later
+- what the parser extracted
+- what the analyst inferred
+- what the planner assumed
+- what the user changed
+- what the generator produced
 
 ## Core Design Principles
 
 - Multi-agent instead of one giant LLM call
 - JSON contracts between stages
 - Human-in-the-loop before generation
-- Reproducibility over “magic”
+- Reproducibility over magic
 - Graceful degradation when inputs are messy
 - Baseline code that runs and can be extended
 
-## Architecture
+## Workflow
 
 ```mermaid
 flowchart TD
@@ -63,6 +75,20 @@ flowchart TD
     K --> L["Notebook Builder Agent"]
     L --> M["Colab Notebook + Artifact Bundle"]
 ```
+
+## UI Workflow
+
+The built-in UI lets a user:
+
+- upload a PDF directly from the browser
+- see recent jobs and live status changes
+- inspect parsed summaries, analysis, and pipeline plans
+- review agent prompts, payloads, and responses
+- edit training and model decisions
+- approve generation
+- download the final artifact bundle
+
+The UI is served directly by FastAPI at `/`.
 
 ## Agents
 
@@ -182,8 +208,10 @@ pro4/
 |   |-- models/
 |   |-- orchestration/
 |   |-- prompts/
-|   `-- services/
+|   |-- services/
+|   `-- web/
 |-- docs/
+|   `-- images/
 |-- examples/
 |-- tests/
 |-- pyproject.toml
@@ -199,6 +227,7 @@ pro4/
 - [app/services/pdf_parser.py](C:/Users/Antony%20Joseph/Documents/pro4/app/services/pdf_parser.py)
 - [app/services/code_generator.py](C:/Users/Antony%20Joseph/Documents/pro4/app/services/code_generator.py)
 - [app/services/notebook_builder.py](C:/Users/Antony%20Joseph/Documents/pro4/app/services/notebook_builder.py)
+- [app/web/index.html](C:/Users/Antony%20Joseph/Documents/pro4/app/web/index.html)
 - [tests](C:/Users/Antony%20Joseph/Documents/pro4/tests)
 
 ## API Overview
@@ -207,9 +236,17 @@ pro4/
 
 Upload a PDF and create a background job.
 
+### `GET /jobs`
+
+List recent jobs for the UI.
+
 ### `GET /jobs/{job_id}`
 
 Fetch job state and outputs.
+
+### `GET /jobs/{job_id}/trace`
+
+Fetch the agent trace shown in the UI.
 
 ### `GET /jobs/{job_id}/decision`
 
@@ -239,6 +276,10 @@ python -m venv .venv
 pip install -e .
 uvicorn app.main:app --reload
 ```
+
+Open:
+
+[http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 Health check:
 
@@ -280,18 +321,21 @@ Paper2Project is now beyond a pure scaffold. The repository includes:
 - notebook generation
 - download endpoints
 - authentication and CORS
+- a workflow UI
 - tests for core utilities
 
 It is still a baseline-oriented system, not a perfect paper reproduction engine. That tradeoff is intentional.
 
 ## Tests
 
-The repository includes a small but real test suite in [tests](C:/Users/Antony%20Joseph/Documents/pro4/tests) covering:
+The repository includes a real starter test suite in [tests](C:/Users/Antony%20Joseph/Documents/pro4/tests) covering:
 
 - job store persistence
 - PDF parsing basics
+- nested heading handling
 - dataset mapper behavior
 - generated config structure
+- memory filtering and truncation
 
 ## Contributors
 

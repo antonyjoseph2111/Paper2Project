@@ -24,6 +24,9 @@ def build_colab_notebook(job: JobRecord, output_dir: Path, decision_config: Deci
             return f"# Missing generated artifact: {filename}\n"
         return path.read_text(encoding="utf-8")
 
+    def writefile_cell(filename: str, content: str) -> nbf.NotebookNode:
+        return nbf.v4.new_code_cell(f"%%writefile {filename}\n{content}")
+
     model_py = safe_read("model.py")
     data_loader_py = safe_read("data_loader.py")
     train_py = safe_read("train.py")
@@ -44,30 +47,12 @@ def build_colab_notebook(job: JobRecord, output_dir: Path, decision_config: Deci
             "project_dir"
         ),
         nbf.v4.new_markdown_cell("## Recreate generated files"),
+        nbf.v4.new_code_cell("import os\nos.chdir(project_dir)\nprint('Working directory:', os.getcwd())"),
+        writefile_cell("model.py", model_py),
+        writefile_cell("data_loader.py", data_loader_py),
+        writefile_cell("train.py", train_py),
+        writefile_cell("config.yaml", config_yaml),
         nbf.v4.new_code_cell(
-            "from pathlib import Path\n"
-            f"Path(project_dir / 'model.py').write_text({model_py!r}, encoding='utf-8')\n"
-            "print('model.py written')"
-        ),
-        nbf.v4.new_code_cell(
-            "from pathlib import Path\n"
-            f"Path(project_dir / 'data_loader.py').write_text({data_loader_py!r}, encoding='utf-8')\n"
-            "print('data_loader.py written')"
-        ),
-        nbf.v4.new_code_cell(
-            "from pathlib import Path\n"
-            f"Path(project_dir / 'train.py').write_text({train_py!r}, encoding='utf-8')\n"
-            "print('train.py written')"
-        ),
-        nbf.v4.new_code_cell(
-            "from pathlib import Path\n"
-            f"Path(project_dir / 'config.yaml').write_text({config_yaml!r}, encoding='utf-8')\n"
-            "print('config.yaml written')"
-        ),
-        nbf.v4.new_code_cell(
-            "import os\n"
-            "os.chdir(project_dir)\n"
-            "print('Working directory:', os.getcwd())\n"
             "print(sorted(path.name for path in Path('.').iterdir()))"
         ),
         nbf.v4.new_markdown_cell("## Inspect config"),

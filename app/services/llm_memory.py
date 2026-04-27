@@ -9,7 +9,7 @@ class SharedAgentMemory:
             AgentTurn(stage=stage, provider=provider, model=model, role=role, content=content)
         )
 
-    def render(self, job: JobRecord, stage: str, max_turns: int = 8) -> str:
+    def render(self, job: JobRecord, stage: str, max_turns: int = 6, max_chars_per_turn: int = 900) -> str:
         preferred_stages = {
             "paper_analyst": {"paper_analyst"},
             "planner": {"paper_analyst", "planner"},
@@ -23,7 +23,10 @@ class SharedAgentMemory:
             return "No prior shared memory."
         lines = []
         for turn in relevant:
+            content = turn.content
+            if len(content) > max_chars_per_turn:
+                content = content[:max_chars_per_turn] + "\n...[truncated for memory budget]..."
             lines.append(
-                f"[stage={turn.stage} provider={turn.provider} model={turn.model} role={turn.role}] {turn.content}"
+                f"[stage={turn.stage} provider={turn.provider} model={turn.model} role={turn.role}] {content}"
             )
         return "\n".join(lines)

@@ -148,6 +148,12 @@ class Paper2ProjectWorkflow:
         stored = self.store.load(job_id)
         return deepcopy(stored) if stored is not None else None
 
+    def list_jobs(self, limit: int = 25) -> list[JobRecord]:
+        with self.lock:
+            jobs = [deepcopy(job) for job in self.jobs.values()]
+        jobs.sort(key=lambda item: item.updated_at, reverse=True)
+        return jobs[:limit]
+
     def get_job_or_404(self, job_id: str) -> JobRecord:
         job = self.get_job(job_id)
         if not job:

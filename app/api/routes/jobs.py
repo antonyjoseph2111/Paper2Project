@@ -4,10 +4,15 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 
 from app.api.deps import verify_api_key
-from app.models.schemas import ArtifactManifest, DecisionUpdateRequest, JobRecord
+from app.models.schemas import AgentTurn, ArtifactManifest, DecisionUpdateRequest, JobRecord
 from app.orchestration.workflow import WORKFLOW
 
 router = APIRouter(dependencies=[Depends(verify_api_key)])
+
+
+@router.get("", response_model=list[JobRecord])
+def list_jobs(limit: int = 25) -> list[JobRecord]:
+    return WORKFLOW.list_jobs(limit=limit)
 
 
 @router.post("", response_model=JobRecord)
@@ -21,6 +26,12 @@ async def create_job(file: UploadFile = File(...)) -> JobRecord:
 @router.get("/{job_id}", response_model=JobRecord)
 def get_job(job_id: str) -> JobRecord:
     return WORKFLOW.get_job_or_404(job_id)
+
+
+@router.get("/{job_id}/trace", response_model=list[AgentTurn])
+def get_job_trace(job_id: str) -> list[AgentTurn]:
+    job = WORKFLOW.get_job_or_404(job_id)
+    return job.agent_memory
 
 
 @router.get("/{job_id}/decision")

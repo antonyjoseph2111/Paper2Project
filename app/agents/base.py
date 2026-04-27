@@ -55,6 +55,15 @@ class Agent(ABC):
         if not self.llm.has_any_provider():
             return None
         prompt = self.load_prompt()
+        self.memory.append(job, self.name, "internal", "prompt-template", "system", prompt)
+        self.memory.append(
+            job,
+            self.name,
+            "internal",
+            "structured-payload",
+            "user",
+            json.dumps(payload, ensure_ascii=False, indent=2)[:4000],
+        )
         memory = self.memory.render(job, self.name)
         responses = self.llm.generate_json(self.name, prompt, payload, memory)
         parsed: dict[str, Any] | None = None

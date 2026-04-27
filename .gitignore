@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 artifacts/
 .model-pilot/
+state/
+smoke_test_sample.pdf

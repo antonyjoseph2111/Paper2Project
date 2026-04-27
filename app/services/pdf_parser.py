@@ -12,10 +12,10 @@ from app.services.source_enrichment import collect_tex_text, parse_grobid_tei
 
 SECTION_PATTERNS = {
     "abstract": re.compile(r"^(abstract)\b", re.IGNORECASE),
-    "introduction": re.compile(r"^(\d+\.?\s*)?introduction\b", re.IGNORECASE),
-    "methodology": re.compile(r"^(\d+\.?\s*)?(method|methods|methodology|approach)\b", re.IGNORECASE),
-    "model": re.compile(r"^(\d+\.?\s*)?(model|architecture)\b", re.IGNORECASE),
-    "experiments": re.compile(r"^(\d+\.?\s*)?(experiments?|evaluation|results)\b", re.IGNORECASE),
+    "introduction": re.compile(r"^(\d+(?:\.\d+)*\.?\s*)?introduction\b", re.IGNORECASE),
+    "methodology": re.compile(r"^(\d+(?:\.\d+)*\.?\s*)?(method|methods|methodology|approach)\b", re.IGNORECASE),
+    "model": re.compile(r"^(\d+(?:\.\d+)*\.?\s*)?(model|architecture)\b", re.IGNORECASE),
+    "experiments": re.compile(r"^(\d+(?:\.\d+)*\.?\s*)?(experiments?|evaluation|results)\b", re.IGNORECASE),
 }
 
 
@@ -33,9 +33,9 @@ def _detect_section_name(line: str) -> str | None:
         if pattern.match(stripped):
             return name
     subsection_patterns = {
-        "model": re.compile(r"^(\d+(?:\.\d+)+\s+)?(model|architecture|network)\b", re.IGNORECASE),
-        "methodology": re.compile(r"^(\d+(?:\.\d+)+\s+)?(training|optimization|method|approach)\b", re.IGNORECASE),
-        "experiments": re.compile(r"^(\d+(?:\.\d+)+\s+)?(evaluation|results|ablation|experiment)\b", re.IGNORECASE),
+        "model": re.compile(r"^(\d+(?:\.\d+)*\.?\s+)?(model|architecture|network)\b", re.IGNORECASE),
+        "methodology": re.compile(r"^(\d+(?:\.\d+)*\.?\s+)?(training|optimization|method|approach)\b", re.IGNORECASE),
+        "experiments": re.compile(r"^(\d+(?:\.\d+)*\.?\s+)?(evaluation|results|ablation|experiment)\b", re.IGNORECASE),
     }
     for name, pattern in subsection_patterns.items():
         if pattern.match(stripped):

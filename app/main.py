@@ -1,7 +1,11 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api.routes.jobs import router as jobs_router
+from app.api.routes.ui import router as ui_router
 from app.core.config import settings
 from app.core.logging import configure_logging
 
@@ -22,7 +26,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(ui_router)
 app.include_router(jobs_router, prefix="/jobs", tags=["jobs"])
+web_dir = Path(__file__).resolve().parent / "web"
+if web_dir.exists():
+    app.mount("/web", StaticFiles(directory=web_dir), name="web")
 
 
 @app.get("/health")

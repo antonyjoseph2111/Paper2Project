@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paper2Project</title>
+  <style>
+    :root { --bg:#f4f1ea; --panel:#fffdf8; --panel-strong:#fff; --ink:#1e1f1c; --muted:#646457; --line:#ddd6c8; --accent:#134e4a; --accent-soft:#d8efe7; --accent-warm:#d97706; --danger:#b91c1c; --shadow:0 18px 50px rgba(32,30,24,.09); --radius:18px; }
+    * { box-sizing:border-box; } body { margin:0; font-family:"Segoe UI","Inter",system-ui,sans-serif; color:var(--ink); background:radial-gradient(circle at top left, rgba(19,78,74,.10), transparent 28%), radial-gradient(circle at bottom right, rgba(217,119,6,.08), transparent 22%), var(--bg); }
+    .shell { min-height:100vh; display:grid; grid-template-columns:320px 1fr 420px; gap:20px; padding:24px; }
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+    .panel-inner { padding:20px; } .sidebar-header { padding:20px; border-bottom:1px solid var(--line); background:linear-gradient(140deg, rgba(19,78,74,.94), rgba(9,53,51,.96)); color:#f3f7f6; }
+    .eyebrow { text-transform:uppercase; letter-spacing:.12em; font-size:11px; opacity:.78; margin-bottom:10px; } h1,h2,h3,h4,p { margin:0; }
+    h1 { font-size:28px; line-height:1.05; margin-bottom:12px; } .lead { color:rgba(243,247,246,.82); line-height:1.5; font-size:14px; }
+    .stack { display:grid; gap:14px; } .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:16px; }
+    button,.button { border:0; border-radius:999px; padding:10px 16px; font-weight:600; cursor:pointer; background:var(--accent); color:#fff; transition:transform .15s ease, opacity .15s ease; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+    button:hover,.button:hover { transform:translateY(-1px); } button.secondary,.button.secondary { background:transparent; color:var(--ink); border:1px solid var(--line); } button.warn { background:var(--accent-warm); } button[disabled] { opacity:.5; cursor:not-allowed; transform:none; }
+    input,select,textarea { width:100%; border:1px solid var(--line); background:var(--panel-strong); color:var(--ink); border-radius:14px; padding:12px 14px; font:inherit; } textarea { min-height:110px; resize:vertical; }
+    label { display:grid; gap:8px; color:var(--muted); font-size:13px; font-weight:600; }
+    .job-list { max-height:calc(100vh - 420px); overflow:auto; padding:12px; display:grid; gap:10px; }
+    .job-card { border:1px solid var(--line); background:var(--panel-strong); border-radius:16px; padding:14px; cursor:pointer; }
+    .job-card.active { border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); } .job-card small { display:block; color:var(--muted); margin-top:6px; }
+    .main { display:grid; grid-template-rows:auto auto 1fr; gap:20px; }
+    .hero { padding:24px; background:linear-gradient(135deg, rgba(19,78,74,.93), rgba(18,52,86,.93)), var(--panel); color:#fff; }
+    .hero-grid { display:grid; grid-template-columns:1.25fr 1fr; gap:18px; align-items:end; } .hero-copy p { margin-top:12px; color:rgba(255,255,255,.8); line-height:1.6; }
+    .hero-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; } .stat { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:16px; padding:14px; } .stat strong { display:block; font-size:20px; margin-top:8px; }
+    .status-row,.summary-grid,.decision-grid,.artifact-grid { display:grid; gap:12px; } .status-row { grid-template-columns:repeat(5, minmax(0,1fr)); } .summary-grid,.decision-grid,.artifact-grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .tile { border:1px solid var(--line); border-radius:18px; padding:16px; background:var(--panel-strong); } .tile h3 { font-size:15px; margin-bottom:10px; }
+    .pill { display:inline-flex; align-items:center; gap:8px; border-radius:999px; padding:7px 12px; background:var(--accent-soft); color:var(--accent); font-size:12px; font-weight:700; letter-spacing:.02em; }
+    .pill.warn { background:#fff3d8; color:#9a6200; } .pill.danger { background:#fde2e2; color:var(--danger); } .pill.muted { background:#ece8df; color:#665f52; }
+    .content-grid { display:grid; gap:20px; } .key-list { display:grid; gap:8px; font-size:14px; } .key-item { display:flex; justify-content:space-between; gap:16px; padding:10px 0; border-bottom:1px dashed var(--line); } .key-item:last-child { border-bottom:0; }
+    .muted { color:var(--muted); } .trace { height:calc(100vh - 48px); display:grid; grid-template-rows:auto auto 1fr; } .trace-controls { display:flex; gap:10px; flex-wrap:wrap; padding:16px 20px 0 20px; }
+    .trace-list { overflow:auto; padding:12px 16px 20px; display:grid; gap:12px; } .trace-card { border:1px solid var(--line); border-radius:16px; background:var(--panel-strong); overflow:hidden; }
+    .trace-head { display:flex; justify-content:space-between; gap:10px; padding:12px 14px; border-bottom:1px solid var(--line); background:#faf7f0; } .trace-meta { display:grid; gap:4px; font-size:12px; color:var(--muted); }
+    .trace-body { padding:14px; white-space:pre-wrap; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12.5px; line-height:1.55; max-height:360px; overflow:auto; }
+    .error-box { border:1px solid #f1c8c8; background:#fff0f0; color:#7a1111; border-radius:16px; padding:14px; white-space:pre-wrap; }
+    .empty { color:var(--muted); border:1px dashed var(--line); border-radius:16px; padding:16px; text-align:center; background:rgba(255,255,255,.45); }
+    .section-title { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px; } .upload-box { border:1px dashed rgba(255,255,255,.4); border-radius:20px; padding:18px; background:rgba(255,255,255,.08); }
+    .code-like { white-space:pre-wrap; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px; background:#faf7f0; border-radius:14px; padding:12px; border:1px solid var(--line); max-height:220px; overflow:auto; }
+    @media (max-width:1380px) { .shell { grid-template-columns:300px 1fr; } .trace { grid-column:1 / -1; height:auto; } }
+    @media (max-width:980px) { .shell { grid-template-columns:1fr; padding:14px; } .status-row,.summary-grid,.decision-grid,.artifact-grid,.hero-grid,.hero-stats { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="panel">
+      <div class="sidebar-header">
+        <div class="eyebrow">Paper To Project</div>
+        <h1>Paper2Project</h1>
+        <p class="lead">Upload a research paper, watch the agents work, adjust the plan, and download a runnable baseline.</p>
+      </div>
+      <div class="panel-inner stack">
+        <label>Optional API Key<input id="apiKeyInput" type="password" placeholder="x-api-key for protected deployments"></label>
+        <button id="refreshJobsButton" class="secondary">Refresh Jobs</button>
+      </div>
+      <div class="panel-inner" style="padding-top:0;">
+        <div class="section-title"><h3>Recent Jobs</h3><span class="pill muted" id="jobCountPill">0 jobs</span></div>
+      </div>
+      <div id="jobList" class="job-list"></div>
+    </aside>
+    <main class="main">
+      <section class="panel hero">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow">Workflow Control Room</div>
+            <h2 style="font-size:38px; line-height:1.05;">From PDF to configurable ML baseline</h2>
+            <p>Track each stage, inspect agent prompts and responses, edit key decisions, and download the generated project without leaving the app.</p>
+            <div class="toolbar" style="margin-top:18px;">
+              <label class="upload-box" style="display:grid; gap:10px; width:min(420px,100%);">
+                <span style="color:#f6fbfa; font-size:13px;">Upload research paper PDF</span>
+                <input id="fileInput" type="file" accept=".pdf,application/pdf">
+                <button id="uploadButton" type="button">Create Job</button>
+              </label>
+            </div>
+          </div>
+          <div class="hero-stats">
+            <div class="stat"><div class="eyebrow">Live Status</div><strong id="heroStatus">Idle</strong></div>
+            <div class="stat"><div class="eyebrow">Selected Job</div><strong id="heroJobId">None</strong></div>
+            <div class="stat"><div class="eyebrow">Artifacts</div><strong id="heroArtifacts">0</strong></div>
+          </div>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel-inner stack">
+          <div class="section-title">
+            <div><div class="eyebrow" id="selectedFilename">No file selected</div><h2 id="paperTitle">Select a job to inspect the workflow</h2></div>
+            <div class="toolbar">
+              <button id="approveButton" class="warn" disabled>Approve And Generate</button>
+              <button id="saveDecisionButton" class="secondary" disabled>Save Decisions</button>
+              <a id="downloadButton" class="button secondary" href="#" style="pointer-events:none; opacity:.5;">Download Artifacts</a>
+            </div>
+          </div>
+          <div class="status-row" id="statusTiles"></div>
+          <div class="summary-grid">
+            <div class="tile"><h3>Paper Summary</h3><div id="paperSummary" class="muted">Upload or select a job to see parsed paper context.</div></div>
+            <div class="tile"><h3>Errors And Warnings</h3><div id="errorPanel" class="empty">No errors recorded.</div></div>
+          </div>
+          <div class="content-grid">
+            <div class="tile"><div class="section-title"><h3>Analysis Snapshot</h3><span id="analysisConfidence" class="pill muted">No analysis yet</span></div><div id="analysisGrid" class="key-list"></div></div>
+            <div class="tile"><div class="section-title"><h3>Pipeline Plan</h3><span class="pill muted">Execution steps and assumptions</span></div><div id="planPanel" class="code-like">No plan yet.</div></div>
+            <div class="tile">
+              <div class="section-title"><h3>Decision Editor</h3><span class="pill">Human In The Loop</span></div>
+              <div class="decision-grid">
+                <label>Dataset<input id="datasetSelected" placeholder="ag_news"></label>
+                <label>Dataset Source<input id="datasetSource" placeholder="huggingface"></label>
+                <label>Model<input id="modelSelected" placeholder="distilbert-base-uncased"></label>
+                <label>Optimizer<input id="optimizerField" placeholder="adamw"></label>
+                <label>Scheduler<input id="schedulerField" placeholder="linear"></label>
+                <label>Loss<input id="lossField" placeholder="cross_entropy"></label>
+                <label>Epochs<input id="epochsField" type="number" min="1"></label>
+                <label>Batch Size<input id="batchSizeField" type="number" min="1"></label>
+                <label>Learning Rate<input id="learningRateField" type="number" step="0.000001"></label>
+                <label>Seed<input id="seedField" type="number" min="0"></label>
+                <label>Weight Decay<input id="weightDecayField" type="number" step="0.0001"></label>
+                <label>Max Length<input id="maxLengthField" type="number" min="1"></label>
+              </div>
+            </div>
+            <div class="tile"><div class="section-title"><h3>Artifacts</h3><span class="pill muted">Generated outputs</span></div><div id="artifactPanel" class="artifact-grid"></div></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <section class="panel trace">
+      <div class="sidebar-header" style="padding-bottom:18px;">
+        <div class="eyebrow">Agent Trace</div>
+        <h2 style="font-size:24px; margin-bottom:10px;">Discussion, prompts, and responses</h2>
+        <p class="lead">Follow each stage of the workflow, including prompt templates, structured payloads, provider responses, and internal generation steps.</p>
+      </div>
+      <div class="trace-controls">
+        <select id="stageFilter"><option value="all">All stages</option><option value="paper_analyst">Paper Analyst</option><option value="planner">Planner</option><option value="decision">Decision</option><option value="code_generator">Code Generator</option><option value="notebook_builder">Notebook Builder</option></select>
+        <select id="roleFilter"><option value="all">All roles</option><option value="system">System</option><option value="user">User</option><option value="assistant">Assistant</option></select>
+      </div>
+      <div id="traceList" class="trace-list"></div>
+    </section>
+  </div>
+  <script>
+    const state = { jobs: [], selectedJobId: null, selectedJob: null, trace: [], pollHandle: null };
+    const els = {
+      apiKeyInput: document.getElementById('apiKeyInput'), refreshJobsButton: document.getElementById('refreshJobsButton'),
+      fileInput: document.getElementById('fileInput'), uploadButton: document.getElementById('uploadButton'),
+      jobList: document.getElementById('jobList'), jobCountPill: document.getElementById('jobCountPill'),
+      paperTitle: document.getElementById('paperTitle'), selectedFilename: document.getElementById('selectedFilename'),
+      heroStatus: document.getElementById('heroStatus'), heroJobId: document.getElementById('heroJobId'), heroArtifacts: document.getElementById('heroArtifacts'),
+      statusTiles: document.getElementById('statusTiles'), paperSummary: document.getElementById('paperSummary'), errorPanel: document.getElementById('errorPanel'),
+      analysisGrid: document.getElementById('analysisGrid'), analysisConfidence: document.getElementById('analysisConfidence'), planPanel: document.getElementById('planPanel'),
+      datasetSelected: document.getElementById('datasetSelected'), datasetSource: document.getElementById('datasetSource'), modelSelected: document.getElementById('modelSelected'),
+      optimizerField: document.getElementById('optimizerField'), schedulerField: document.getElementById('schedulerField'), lossField: document.getElementById('lossField'),
+      epochsField: document.getElementById('epochsField'), batchSizeField: document.getElementById('batchSizeField'), learningRateField: document.getElementById('learningRateField'),
+      seedField: document.getElementById('seedField'), weightDecayField: document.getElementById('weightDecayField'), maxLengthField: document.getElementById('maxLengthField'),
+      saveDecisionButton: document.getElementById('saveDecisionButton'), approveButton: document.getElementById('approveButton'),
+      artifactPanel: document.getElementById('artifactPanel'), downloadButton: document.getElementById('downloadButton'),
+      traceList: document.getElementById('traceList'), stageFilter: document.getElementById('stageFilter'), roleFilter: document.getElementById('roleFilter')
+    };
+    function getApiKey() { return els.apiKeyInput.value.trim(); }
+    function headers(extra = {}) { const result = { ...extra }; const apiKey = getApiKey(); if (apiKey) result['x-api-key'] = apiKey; return result; }
+    async function api(path, options = {}) { const response = await fetch(path, { ...options, headers: headers(options.headers || {}) }); if (!response.ok) { const text = await response.text(); throw new Error(text || `Request failed: ${response.status}`); } const contentType = response.headers.get('content-type') || ''; return contentType.includes('application/json') ? response.json() : response.text(); }
+    function statusTone(status) { if (status === 'generated') return 'pill'; if (status === 'failed' || status === 'partial') return 'pill danger'; if (status === 'awaiting_approval' || status === 'generating') return 'pill warn'; return 'pill muted'; }
+    function formatJson(value) { return JSON.stringify(value, null, 2); }
+    function escapeHtml(value) { return String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;'); }
+    function toNumberOrNull(value) { return value === '' ? null : Number(value); } function toFloatOrNull(value) { return value === '' ? null : Number(value); }
+    function renderJobList() {
+      els.jobCountPill.textContent = `${state.jobs.length} job${state.jobs.length === 1 ? '' : 's'}`;
+      if (!state.jobs.length) { els.jobList.innerHTML = `<div class="empty">No jobs yet. Upload a paper to start the workflow.</div>`; return; }
+      els.jobList.innerHTML = state.jobs.map(job => `<div class="job-card ${job.job_id === state.selectedJobId ? 'active' : ''}" data-job-id="${job.job_id}"><strong>${escapeHtml(job.parsed_paper?.title || job.filename || job.job_id)}</strong><small>${escapeHtml(job.status)}</small><small>${escapeHtml(job.filename)}</small></div>`).join('');
+      document.querySelectorAll('.job-card').forEach(card => card.addEventListener('click', () => selectJob(card.dataset.jobId)));
+    }
+    function renderStatusTiles(job) {
+      const stages = [['parsed','Parsed'],['analyzed','Analyzed'],['planned','Planned'],['awaiting_approval','Decision Ready'],['generated','Generated']];
+      els.statusTiles.innerHTML = stages.map(([key,label]) => {
+        const active = job.status === key || (key === 'parsed' && ['parsed','analyzed','planned','awaiting_approval','generating','generated'].includes(job.status)) || (key === 'analyzed' && ['analyzed','planned','awaiting_approval','generating','generated'].includes(job.status)) || (key === 'planned' && ['planned','awaiting_approval','generating','generated'].includes(job.status)) || (key === 'awaiting_approval' && ['awaiting_approval','generating','generated'].includes(job.status)) || (key === 'generated' && ['generated'].includes(job.status));
+        return `<div class="tile"><div class="${active ? 'pill' : 'pill muted'}">${label}</div><div style="margin-top:12px;" class="muted">${active ? 'Reached' : 'Pending'}</div></div>`;
+      }).join('');
+    }
+    function renderAnalysis(job) {
+      const analysis = job.analysis;
+      if (!analysis) { els.analysisGrid.innerHTML = `<div class="empty">No analysis available yet.</div>`; els.analysisConfidence.textContent = 'No analysis yet'; els.analysisConfidence.className = 'pill muted'; return; }
+      const items = [['Task',analysis.task?.value,analysis.task?.confidence],['Domain',analysis.domain?.value,analysis.domain?.confidence],['Input',analysis.input_data_type?.value,analysis.input_data_type?.confidence],['Output',analysis.output_format?.value,analysis.output_format?.confidence],['Model',analysis.model_type?.value,analysis.model_type?.confidence],['Loss',analysis.loss?.value,analysis.loss?.confidence],['Metrics',(analysis.metrics?.value || []).join(', '),analysis.metrics?.confidence],['Components',(analysis.components?.value || []).join(', '),analysis.components?.confidence]];
+      els.analysisGrid.innerHTML = items.map(([label,value,confidence]) => `<div class="key-item"><span class="muted">${escapeHtml(label)}</span><span>${escapeHtml(String(value || 'unknown'))} ${confidence !== undefined ? `<span class="muted">(${Math.round((confidence || 0) * 100)}%)</span>` : ''}</span></div>`).join('');
+      const conf = Math.round((((analysis.task?.confidence || 0) + (analysis.model_type?.confidence || 0) + (analysis.domain?.confidence || 0)) / 3) * 100);
+      els.analysisConfidence.textContent = `Approx confidence ${conf}%`;
+      els.analysisConfidence.className = conf >= 70 ? 'pill' : conf >= 45 ? 'pill warn' : 'pill danger';
+    }
+    function renderPlan(job) { els.planPanel.textContent = job.plan ? formatJson(job.plan) : 'No plan yet.'; }
+    function renderDecision(job) {
+      const decision = job.decision_config; const enabled = Boolean(decision);
+      els.saveDecisionButton.disabled = !enabled; els.approveButton.disabled = !enabled || ['generating','generated'].includes(job.status);
+      const fields = [['datasetSelected',decision?.dataset?.selected],['datasetSource',decision?.dataset?.source],['modelSelected',decision?.model?.selected],['optimizerField',decision?.training?.optimizer],['schedulerField',decision?.training?.scheduler],['lossField',decision?.training?.loss],['epochsField',decision?.training?.epochs],['batchSizeField',decision?.training?.batch_size],['learningRateField',decision?.training?.learning_rate],['seedField',decision?.training?.seed],['weightDecayField',decision?.training?.weight_decay],['maxLengthField',decision?.training?.max_length]];
+      fields.forEach(([id, value]) => els[id].value = value ?? '');
+    }
+    function renderArtifacts(job) {
+      const files = job.artifacts?.files || []; els.heroArtifacts.textContent = String(files.length);
+      els.artifactPanel.innerHTML = files.length ? files.map(file => `<div class="tile"><div class="muted">Artifact</div><div style="margin-top:8px;">${escapeHtml(file.split(/[\\\\/]/).pop())}</div></div>`).join('') : `<div class="empty" style="grid-column:1 / -1;">Artifacts will appear here after generation.</div>`;
+      if (job.artifacts?.archive_file) { els.downloadButton.href = `/jobs/${job.job_id}/artifacts/download`; els.downloadButton.style.pointerEvents = 'auto'; els.downloadButton.style.opacity = '1'; } else { els.downloadButton.href = '#'; els.downloadButton.style.pointerEvents = 'none'; els.downloadButton.style.opacity = '0.5'; }
+    }
+    function renderTrace() {
+      const stage = els.stageFilter.value, role = els.roleFilter.value;
+      const filtered = state.trace.filter(turn => (stage === 'all' || turn.stage === stage) && (role === 'all' || turn.role === role));
+      els.traceList.innerHTML = filtered.length ? filtered.map(turn => `<article class="trace-card"><div class="trace-head"><div><div class="${statusTone(turn.stage === 'code_generator' || turn.stage === 'notebook_builder' ? 'generated' : 'awaiting_approval')}">${escapeHtml(turn.stage)}</div></div><div class="trace-meta"><span>${escapeHtml(turn.role)}</span><span>${escapeHtml(turn.provider)} / ${escapeHtml(turn.model)}</span><span>${new Date(turn.created_at).toLocaleString()}</span></div></div><div class="trace-body">${escapeHtml(turn.content)}</div></article>`).join('') : `<div class="empty">No trace entries for the current filters.</div>`;
+    }
+    function renderJob(job) {
+      state.selectedJob = job; state.selectedJobId = job.job_id; els.paperTitle.textContent = job.parsed_paper?.title || job.filename || job.job_id; els.selectedFilename.textContent = job.filename; els.heroStatus.textContent = job.status; els.heroJobId.textContent = job.job_id.slice(0, 8);
+      renderStatusTiles(job); renderAnalysis(job); renderPlan(job); renderDecision(job); renderArtifacts(job); els.paperSummary.textContent = job.parsed_paper?.problem || 'No parsed paper summary yet.';
+      if (job.errors?.length) { els.errorPanel.className = 'error-box'; els.errorPanel.textContent = job.errors.join('\n'); } else { els.errorPanel.className = 'empty'; els.errorPanel.textContent = 'No errors recorded.'; }
+      renderJobList();
+    }
+    async function loadJobs(selectNewest = false) {
+      const jobs = await api('/jobs?limit=30'); state.jobs = jobs; renderJobList();
+      if (selectNewest && jobs.length) await selectJob(jobs[0].job_id);
+      else if (state.selectedJobId && jobs.find(job => job.job_id === state.selectedJobId)) await selectJob(state.selectedJobId, false);
+    }
+    async function loadTrace(jobId) { state.trace = await api(`/jobs/${jobId}/trace`); renderTrace(); }
+    async function selectJob(jobId, resetPolling = true) {
+      state.selectedJobId = jobId; const job = await api(`/jobs/${jobId}`); renderJob(job); await loadTrace(jobId);
+      if (resetPolling) {
+        if (state.pollHandle) clearInterval(state.pollHandle);
+        state.pollHandle = setInterval(async () => {
+          if (!state.selectedJobId) return;
+          const fresh = await api(`/jobs/${state.selectedJobId}`); renderJob(fresh); await loadTrace(state.selectedJobId); await loadJobs(false);
+        }, 2500);
+      }
+    }
+    async function createJob() {
+      const file = els.fileInput.files[0]; if (!file) { alert('Choose a PDF first.'); return; }
+      const form = new FormData(); form.append('file', file); els.uploadButton.disabled = true;
+      try {
+        const job = await fetch('/jobs', { method:'POST', headers:getApiKey() ? { 'x-api-key': getApiKey() } : {}, body:form }).then(async response => { if (!response.ok) throw new Error(await response.text()); return response.json(); });
+        els.fileInput.value = ''; await loadJobs(true); await selectJob(job.job_id);
+      } catch (error) { alert(`Upload failed: ${error.message}`); } finally { els.uploadButton.disabled = false; }
+    }
+    async function saveDecision() {
+      if (!state.selectedJobId) return;
+      const payload = { dataset_selected: els.datasetSelected.value || null, dataset_source: els.datasetSource.value || null, model_selected: els.modelSelected.value || null, optimizer: els.optimizerField.value || null, scheduler: els.schedulerField.value || null, loss: els.lossField.value || null, epochs: toNumberOrNull(els.epochsField.value), batch_size: toNumberOrNull(els.batchSizeField.value), learning_rate: toFloatOrNull(els.learningRateField.value), seed: toNumberOrNull(els.seedField.value), weight_decay: toFloatOrNull(els.weightDecayField.value), max_length: toNumberOrNull(els.maxLengthField.value) };
+      await api(`/jobs/${state.selectedJobId}/decision`, { method:'PATCH', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify(payload) }); await selectJob(state.selectedJobId, false);
+    }
+    async function approveJob() { if (!state.selectedJobId) return; await api(`/jobs/${state.selectedJobId}/approve`, { method:'POST' }); await selectJob(state.selectedJobId, false); }
+    els.apiKeyInput.value = localStorage.getItem('paper2project_api_key') || '';
+    els.apiKeyInput.addEventListener('change', () => localStorage.setItem('paper2project_api_key', els.apiKeyInput.value.trim()));
+    els.refreshJobsButton.addEventListener('click', () => loadJobs(false).catch(error => alert(error.message)));
+    els.uploadButton.addEventListener('click', () => createJob());
+    els.saveDecisionButton.addEventListener('click', () => saveDecision().catch(error => alert(error.message)));
+    els.approveButton.addEventListener('click', () => approveJob().catch(error => alert(error.message)));
+    els.stageFilter.addEventListener('change', renderTrace); els.roleFilter.addEventListener('change', renderTrace);
+    loadJobs(true).catch(error => { els.jobList.innerHTML = `<div class="error-box">${escapeHtml(error.message)}</div>`; });
+  </script>
+</body>
+</html>

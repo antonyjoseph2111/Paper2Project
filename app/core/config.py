@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Annotated
 
 from pydantic import field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 from app.models.schemas import ProviderSpec
 
@@ -12,10 +13,10 @@ class Settings(BaseSettings):
     app_name: str = "Paper2Project"
     artifact_root: Path = Path("artifacts")
     state_root: Path = Path("state")
-    allowed_origins: list[str] = ["*"]
-    api_keys: list[str] = []
+    allowed_origins: Annotated[list[str], NoDecode] = ["*"]
+    api_keys: Annotated[list[str], NoDecode] = []
     require_api_key: bool = False
-    llm_roster: list[str] = [
+    llm_roster: Annotated[list[str], NoDecode] = [
         "openai:gpt-4.1-mini",
         "anthropic:claude-3-5-sonnet-latest",
         "google:gemini-2.5-flash",
@@ -53,6 +54,11 @@ class Settings(BaseSettings):
     @classmethod
     def split_csv(cls, value: object) -> object:
         if isinstance(value, str):
+            stripped = value.strip()
+            if stripped.startswith("[") and stripped.endswith("]"):
+                import json
+
+                return json.loads(stripped)
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
 
