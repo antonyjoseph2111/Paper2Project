@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "paper2project"
+version = "0.1.0"
+description = "Convert ML papers into reproducible starter projects and Colab notebooks."
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn>=0.30.0",
+  "pydantic>=2.8.0",
+  "pydantic-settings>=2.4.0",
+  "python-multipart>=0.0.9",
+  "PyMuPDF>=1.24.0",
+  "nbformat>=5.10.0",
+  "PyYAML>=6.0.1",
+  "numpy>=1.26.0",
+  "datasets>=2.20.0",
+  "torch>=2.3.0"
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]

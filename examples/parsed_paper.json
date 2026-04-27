@@ -1,0 +1,16 @@
+{
+  "title": "Attention Is All You Need",
+  "problem": "The paper proposes a new sequence transduction architecture based entirely on attention mechanisms.",
+  "abstract": "We propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism...",
+  "introduction": "Recurrent models have been dominant for sequence transduction tasks...",
+  "methodology_text": "The Transformer follows an encoder-decoder architecture using stacked self-attention and feed-forward layers...",
+  "model_description": "Multi-head attention, positional encodings, residual connections, and layer normalization are the primary building blocks.",
+  "equations": [
+    "Attention(Q, K, V) = softmax(QK^T / sqrt(d_k))V"
+  ],
+  "keywords": [
+    "attention",
+    "transformer",
+    "language"
+  ]
+}

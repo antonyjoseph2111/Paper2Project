@@ -1,0 +1,35 @@
+{
+  "steps": [
+    "load_dataset",
+    "preprocess_data",
+    "build_model",
+    "train_model",
+    "evaluate_model"
+  ],
+  "dataset_requirements": {
+    "source": "huggingface",
+    "candidate_datasets": [
+      "ag_news",
+      "dbpedia_14"
+    ],
+    "split_strategy": "train/validation/test",
+    "notes": "Chosen for fast Colab execution and text classification compatibility."
+  },
+  "model_structure": {
+    "backbone": "distilbert-base-uncased",
+    "head": "linear_classifier",
+    "notes": "Transformer-inspired baseline, not a full reproduction of the original paper."
+  },
+  "hyperparameters": {
+    "epochs": 3,
+    "batch_size": 32,
+    "learning_rate": 2e-05,
+    "seed": 42
+  },
+  "assumptions": [
+    "Dataset substituted because paper dataset is not packaged for Colab."
+  ],
+  "open_questions": [
+    "Should the user prefer faithfulness to architecture or Colab efficiency?"
+  ]
+}

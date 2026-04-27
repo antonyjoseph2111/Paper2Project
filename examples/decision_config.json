@@ -1,0 +1,29 @@
+{
+  "dataset": {
+    "selected": "ag_news",
+    "alternatives": [
+      "dbpedia_14",
+      "yelp_review_full"
+    ],
+    "editable": true,
+    "reason": "Best available text classification dataset for a lightweight baseline."
+  },
+  "model": {
+    "selected": "distilbert-base-uncased",
+    "reason": "Colab-friendly transformer baseline.",
+    "editable": true
+  },
+  "training": {
+    "epochs": 3,
+    "batch_size": 32,
+    "learning_rate": 2e-05,
+    "seed": 42
+  },
+  "approval_required": true,
+  "assumptions": [
+    "This configuration prioritizes runnability over perfect architectural fidelity."
+  ],
+  "unresolved_questions": [
+    "Use a seq2seq notebook instead of classification?"
+  ]
+}

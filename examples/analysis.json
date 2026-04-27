@@ -1,0 +1,30 @@
+{
+  "task": "sequence_classification",
+  "domain": "NLP",
+  "input_data_type": "text",
+  "output_format": "label",
+  "model_type": "Transformer",
+  "components": [
+    "embedding",
+    "multi_head_attention",
+    "feedforward",
+    "layer_norm"
+  ],
+  "loss": "cross_entropy",
+  "metrics": [
+    "accuracy"
+  ],
+  "training_details": {
+    "optimizer": "adamw",
+    "scheduler": "linear",
+    "epochs": 3,
+    "batch_size": 32,
+    "learning_rate": 2e-05
+  },
+  "ambiguities": [
+    "Original paper is sequence-to-sequence, but this baseline is mapped to a classification-friendly Colab demo."
+  ],
+  "assumptions": [
+    "Using a smaller baseline transformer for reproducibility in Colab."
+  ]
+}
