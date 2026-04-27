@@ -1,290 +1,175 @@
 # Paper2Project
 
-**Paper2Project** is an AI system that converts a **machine learning research paper PDF** into a **structured, reproducible, executable ML project** with **PyTorch code** and a **Google Colab notebook**.
+**Paper2Project** turns a machine learning research paper PDF into a structured, editable, reproducible starter project with **PyTorch code** and a **Google Colab notebook**.
 
-If you are looking for a **research paper to code generator**, **ML paper reproduction tool**, **paper to PyTorch project pipeline**, or **paper to Colab notebook workflow**, this project is built for exactly that problem.
+The goal is not blind one-shot automation. The goal is a controllable system that helps you move from **paper -> pipeline -> decisions -> code -> notebook** with visibility at every step.
 
-Paper2Project is also a practical answer to searches like **research paper implementation generator**, **AI paper to code**, **machine learning paper to project**, **paper reproduction with LLM agents**, and **paper to executable notebook**.
+## What It Does
 
-Paper2Project helps bridge the gap between:
+Given a research paper PDF, Paper2Project can:
 
-- academic ML papers
-- reproducible engineering baselines
-- configurable experimentation
-- runnable notebook-based demos
+1. Parse and clean the paper
+2. Extract a structured ML understanding
+3. Build an executable pipeline plan
+4. Expose a human-editable decision layer
+5. Generate modular project files
+6. Generate a Colab notebook
+7. Package the artifacts for download
 
-## Why Paper2Project Matters
-
-Most research papers are not implementation-ready.
-
-They are often missing:
-
-- complete preprocessing details
-- exact hyperparameters
-- public datasets or clean dataset loaders
-- edge-case handling
-- production-oriented project structure
-
-Most AI tools fail here because they try to solve the entire problem in one opaque LLM response.
-
-Paper2Project takes the opposite approach:
-
-- break the task into agents
-- enforce structured JSON between stages
-- expose assumptions to the user
-- generate modular code instead of giant scripts
-- optimize for a runnable baseline, not fake certainty
-
-## What Paper2Project Does
-
-Upload a machine learning paper PDF and the system will:
-
-1. Parse the paper into structured sections
-2. Extract the ML task, model, loss, metrics, and training hints
-3. Build an executable ML pipeline plan
-4. Ask the user to review key decisions
-5. Generate modular PyTorch files
-6. Generate a Google Colab notebook
-
-In short, Paper2Project works as a **research paper implementation assistant** for people who want to move from paper reading to actual model training code.
-
-### Output Artifacts
-
-Paper2Project produces:
+Generated artifacts include:
 
 - `model.py`
 - `data_loader.py`
 - `train.py`
 - `config.yaml`
+- `requirements.txt`
 - `paper2project_notebook.ipynb`
 
-## Who This Is For
+## Why This Project Exists
 
-Paper2Project is useful for:
+Research papers are rarely implementation-ready. They often leave gaps around preprocessing, hyperparameters, dataset availability, evaluation details, or engineering structure.
 
-- ML engineers turning papers into baselines
-- researchers validating ideas quickly
-- students learning from research implementations
-- founders building AI prototype pipelines
-- teams creating reproducible paper-to-code workflows
+Paper2Project is designed for the real engineering workflow:
 
-This makes it relevant for anyone searching for:
+- extract what the paper clearly says
+- mark what is assumed
+- let the user change important decisions
+- generate a runnable baseline
+- preserve enough structure to improve it later
 
-- how to implement a research paper in PyTorch
-- how to convert an ML paper into code
-- how to generate a Colab notebook from a paper
-- how to build a reproducible baseline from an AI paper
+## Core Design Principles
 
-## Core Product Positioning
+- Multi-agent instead of one giant LLM call
+- JSON contracts between stages
+- Human-in-the-loop before generation
+- Reproducibility over “magic”
+- Graceful degradation when inputs are messy
+- Baseline code that runs and can be extended
 
-Paper2Project is:
-
-- a **multi-agent AI system**
-- a **research paper to code pipeline**
-- a **paper reproduction assistant**
-- a **PyTorch project generator**
-- a **Google Colab notebook generator**
-- a **human-in-the-loop ML engineering workflow**
-
-Paper2Project is not:
-
-- a generic chatbot
-- a one-shot summarizer
-- fake pseudocode generation
-- blind automation without user control
-
-## Key Features
-
-- Multi-agent architecture with explicit responsibilities
-- JSON-based communication between every stage
-- Human approval before code generation
-- PyTorch-first implementation strategy
-- Config-driven reproducibility
-- Graceful handling of ambiguous or incomplete papers
-- Colab-ready output
-- Production-oriented backend design with FastAPI
-- Architecture that maps well to real MLOps and ML engineering workflows
-
-## End-to-End Workflow
+## Architecture
 
 ```mermaid
 flowchart TD
-    A["Upload ML Paper PDF"] --> B["PDF Parsing and Cleaning"]
+    A["Upload Paper PDF"] --> B["PDF Parsing + Cleaning"]
     B --> C["Paper Analyst Agent"]
-    C --> D["Structured Analysis JSON"]
+    C --> D["Analysis JSON"]
     D --> E["Planner Agent"]
-    E --> F["Executable Pipeline Plan JSON"]
+    E --> F["Pipeline Plan JSON"]
     F --> G["Decision Agent"]
     G --> H["Editable Decision Config"]
-    H --> I["Human Review and Approval"]
+    H --> I["User Approval"]
     I --> J["Code Generator Agent"]
-    J --> K["PyTorch Project Files"]
+    J --> K["Project Files"]
     K --> L["Notebook Builder Agent"]
-    L --> M["Google Colab Notebook"]
+    L --> M["Colab Notebook + Artifact Bundle"]
 ```
 
-## Multi-Agent Architecture
+## Agents
 
-Paper2Project is intentionally designed as a **modular AI agent system** rather than a single LLM call.
-
-### 1. Paper Analyst Agent
+### Paper Analyst Agent
 
 Extracts:
 
-- task type
-- ML domain
-- input and output format
+- task
+- domain
+- input/output format
 - model family
-- key components
-- loss function
+- components
+- loss
 - metrics
 - training details
 
-### 2. Planner Agent
+### Planner Agent
 
-Builds:
+Converts analysis into:
 
-- step-by-step ML pipeline
+- execution steps
 - dataset requirements
 - model structure
 - hyperparameters
-- assumptions and open questions
+- assumptions
+- open questions
 
-### 3. Decision Agent
+### Decision Agent
 
-Exposes the editable control layer:
+Exposes user-editable controls such as:
 
-- dataset choice
-- model substitution
+- dataset
+- model
+- optimizer
+- scheduler
+- loss
 - epochs
 - batch size
 - learning rate
 - seed
 
-### 4. Code Generator Agent
+### Code Generator Agent
 
-Generates:
+Builds a runnable baseline project from the approved config.
 
-- modular PyTorch code
-- runnable training loop
-- evaluation logic
-- config-driven project structure
+### Notebook Builder Agent
 
-### 5. Notebook Builder Agent
+Builds a Colab notebook that reconstructs the generated files and runs training.
 
-Generates:
+## Current Capabilities
 
-- Google Colab notebook
-- install cells
-- imports
-- dataset setup
-- model definition
-- training and evaluation cells
+### Parsing and enrichment
 
-## Why the Human-in-the-Loop Step Is Critical
+- PDF parsing with PyMuPDF
+- Section chunking for downstream LLM calls
+- Heuristic equation extraction
+- Optional Grobid TEI ingestion
+- Optional arXiv source download and LaTeX text enrichment
 
-Industry systems usually fail when they hide ambiguity.
+### LLM execution
 
-Paper2Project exposes ambiguity before code generation because papers often leave open questions such as:
+- Multi-provider LLM client
+- Shared agent memory across stages
+- Configurable provider roster
+- Configurable provider strategy:
+  - `fallback_chain`
+  - `first_success`
+  - `ensemble`
+- Retry and backoff support
+- Heuristic fallback when LLM output is unavailable or invalid
 
-- which public dataset should replace the original dataset
-- whether to prioritize faithfulness or Colab efficiency
-- which backbone to use when the paper description is incomplete
-- what default hyperparameters should be used
+### Workflow and backend
 
-This makes the system more useful, more trustworthy, and much easier to improve.
+- FastAPI backend
+- Background job execution with `ThreadPoolExecutor`
+- Persistent JSON job store
+- Artifact metadata and zip download endpoint
+- API key protection
+- CORS support
 
-## JSON-First Design
+### Generation
 
-Every major stage returns structured JSON.
+- Config-driven training entrypoint
+- Multi-domain baseline generation for:
+  - NLP classification
+  - NLP generation
+  - CV classification
+  - CV segmentation
+  - tabular classification/regression
+  - RL with a DQN baseline
+- TensorBoard and optional W&B hooks
 
-This is one of the most important engineering decisions in the project because it enables:
+## Supported LLM Providers
 
-- validation
-- retries
-- observability
-- human review
-- auditability
-- downstream code generation safety
+The current provider layer supports:
 
-### Example Analysis JSON
-
-```json
-{
-  "task": "classification",
-  "domain": "NLP",
-  "input_data_type": "text",
-  "output_format": "label",
-  "model_type": "Transformer",
-  "components": ["embedding", "self-attention", "feedforward"],
-  "loss": "cross_entropy",
-  "metrics": ["accuracy"],
-  "training_details": {
-    "optimizer": "adamw",
-    "scheduler": "linear",
-    "epochs": 3,
-    "batch_size": 32,
-    "learning_rate": 2e-5
-  },
-  "ambiguities": [],
-  "assumptions": []
-}
-```
-
-## Example Use Cases
-
-### Research paper reproduction
-
-Start from a paper PDF and get a baseline implementation that is actually runnable.
-
-### AI project bootstrapping
-
-Turn a paper into a starter codebase for fast experimentation.
-
-### Educational workflows
-
-Help students understand the path from paper methodology to real code.
-
-### Internal R&D acceleration
-
-Allow research and engineering teams to evaluate new papers faster.
-
-### Paper-to-project automation
-
-Use a structured AI workflow to turn a PDF paper into a starter ML repository with training code, config, and notebook artifacts.
-
-## Tech Stack
-
-Backend:
-
-- FastAPI
-- Pydantic
-- Python 3.11+
-
-Parsing:
-
-- PyMuPDF
-- optional Grobid integration
-
-Artifact generation:
-
-- nbformat
-- PyYAML
-
-ML stack:
-
-- PyTorch
-- Hugging Face `datasets`
-
-LLM provider options:
-
-- OpenAI GPT
+- OpenAI
+- Anthropic
+- Google Gemini
+- OpenRouter
 - DeepSeek
-- LLaMA-compatible endpoints
+- Groq
+- Together
+- xAI
+- Ollama
 
-Future orchestration path:
-
-- LangGraph
+Configuration is environment-driven with `P2P_`-prefixed settings, and `.env` loading is supported.
 
 ## Project Structure
 
@@ -300,55 +185,51 @@ pro4/
 |   `-- services/
 |-- docs/
 |-- examples/
+|-- tests/
 |-- pyproject.toml
 `-- README.md
 ```
 
-## Repository Highlights
-
-This repository already contains:
-
-- FastAPI backend scaffold
-- typed schemas for all agent outputs
-- orchestration workflow
-- prompt templates for each agent
-- example JSON outputs
-- notebook generation service
-- code generation service
-- architecture and implementation docs
-
-Useful entry points:
+## Key Files
 
 - [app/main.py](C:/Users/Antony%20Joseph/Documents/pro4/app/main.py)
 - [app/orchestration/workflow.py](C:/Users/Antony%20Joseph/Documents/pro4/app/orchestration/workflow.py)
 - [app/models/schemas.py](C:/Users/Antony%20Joseph/Documents/pro4/app/models/schemas.py)
+- [app/services/llm_client.py](C:/Users/Antony%20Joseph/Documents/pro4/app/services/llm_client.py)
 - [app/services/pdf_parser.py](C:/Users/Antony%20Joseph/Documents/pro4/app/services/pdf_parser.py)
-- [docs/architecture.md](C:/Users/Antony%20Joseph/Documents/pro4/docs/architecture.md)
-- [docs/implementation-plan.md](C:/Users/Antony%20Joseph/Documents/pro4/docs/implementation-plan.md)
+- [app/services/code_generator.py](C:/Users/Antony%20Joseph/Documents/pro4/app/services/code_generator.py)
+- [app/services/notebook_builder.py](C:/Users/Antony%20Joseph/Documents/pro4/app/services/notebook_builder.py)
+- [tests](C:/Users/Antony%20Joseph/Documents/pro4/tests)
 
 ## API Overview
 
 ### `POST /jobs`
 
-Upload a paper PDF and start a new Paper2Project job.
+Upload a PDF and create a background job.
 
 ### `GET /jobs/{job_id}`
 
-Retrieve the full job state including parsed paper, analysis, plan, decision state, and artifacts.
+Fetch job state and outputs.
 
 ### `GET /jobs/{job_id}/decision`
 
-Fetch the editable decision JSON.
+Fetch the editable decision config.
 
 ### `PATCH /jobs/{job_id}/decision`
 
-Update dataset, model, epochs, batch size, learning rate, or seed.
+Update the decision config before generation.
 
 ### `POST /jobs/{job_id}/approve`
 
-Approve the decision config and generate the project files plus notebook.
+Start project and notebook generation.
 
-This API design makes Paper2Project suitable for a future **research paper to code SaaS**, an internal **ML research automation platform**, or a **developer tool for paper implementation workflows**.
+### `GET /jobs/{job_id}/artifacts`
+
+Fetch the artifact manifest.
+
+### `GET /jobs/{job_id}/artifacts/download`
+
+Download the generated zip bundle.
 
 ## Quick Start
 
@@ -365,49 +246,52 @@ Health check:
 curl http://127.0.0.1:8000/health
 ```
 
-## Reproducibility Features
-
-- fixed random seed
-- generated `config.yaml`
-- explicit assumptions
-- editable decision layer
-- modular project structure
-- Colab-friendly defaults
-- clear separation between analysis, planning, and generation
-
-## Failure Handling Strategy
-
-Paper2Project is designed to degrade gracefully.
-
-If a paper is incomplete or messy, the system should still produce a useful baseline.
+## Environment Configuration
 
 Examples:
 
-- missing methodology -> produce a simplified baseline
-- unavailable dataset -> recommend substitutes
-- ambiguous model -> ask for user confirmation
-- unclear hyperparameters -> use conservative defaults
+```env
+P2P_OPENAI_API_KEY=...
+P2P_ANTHROPIC_API_KEY=...
+P2P_GOOGLE_API_KEY=...
+P2P_LLM_ROSTER=openai:gpt-4.1-mini,anthropic:claude-3-5-sonnet-latest,google:gemini-2.5-flash
+P2P_LLM_STRATEGY=fallback_chain
+P2P_REQUIRE_API_KEY=false
+```
 
-## SEO and Discoverability Keywords
+## Reproducibility Features
 
-This project is relevant to searches around:
+- fixed seed in generated configs
+- explicit assumptions
+- config-driven training
+- modular output files
+- editable decision layer
+- artifact packaging
+- notebook reconstruction from generated files
 
-- research paper to code
-- machine learning paper implementation
-- AI paper reproduction
-- paper to PyTorch
-- paper to project
-- paper to notebook
-- research paper to Google Colab
-- LLM agent for ML engineering
-- multi-agent research automation
-- reproducible ML project generation
-- research paper implementation generator
-- AI paper to executable code
-- machine learning paper to Colab notebook
-- PyTorch baseline generator from paper
-- paper to training pipeline
-- academic paper to MLOps workflow
+## Current Status
+
+Paper2Project is now beyond a pure scaffold. The repository includes:
+
+- provider-backed LLM orchestration
+- persistence for job state
+- background execution
+- config-driven code generation
+- notebook generation
+- download endpoints
+- authentication and CORS
+- tests for core utilities
+
+It is still a baseline-oriented system, not a perfect paper reproduction engine. That tradeoff is intentional.
+
+## Tests
+
+The repository includes a small but real test suite in [tests](C:/Users/Antony%20Joseph/Documents/pro4/tests) covering:
+
+- job store persistence
+- PDF parsing basics
+- dataset mapper behavior
+- generated config structure
 
 ## Contributors
 
@@ -415,35 +299,8 @@ Paper2Project is authored and directed by **Antony Joseph**.
 
 AI-assisted contribution and development support:
 
-- **OpenAI Codex** for architecture scaffolding, implementation support, and repository polish
-- **Claude** for AI-assisted ideation, refinement, and engineering collaboration
-
-This section is intended as an acknowledgement of AI-assisted development support in the project workflow.
-
-## Why This README Is Search-Friendly
-
-This README is intentionally written to be discoverable for developers, researchers, students, and founders looking for:
-
-- research paper implementation tools
-- paper reproduction workflows
-- multi-agent AI engineering systems
-- PyTorch starter code generation
-- Google Colab notebook generation
-- reproducible ML project scaffolding
-
-The goal is for Paper2Project to be understandable in the first few seconds and searchable across GitHub, Google, and AI tooling directories.
-
-## Roadmap
-
-1. Add real LLM provider adapters
-2. Add persistent job storage
-3. Add background workers
-4. Add LaTeX and arXiv source ingestion
-5. Add Grobid section extraction
-6. Add execution validation for generated code
-7. Add notebook smoke tests
-8. Add downloadable artifact bundles
-9. Add a UI for decision review
+- **OpenAI Codex**
+- **Claude**
 
 ## Documentation
 
@@ -454,23 +311,10 @@ The goal is for Paper2Project to be understandable in the first few seconds and 
 - [Example Pipeline Plan](C:/Users/Antony%20Joseph/Documents/pro4/examples/pipeline_plan.json)
 - [Example Decision Config](C:/Users/Antony%20Joseph/Documents/pro4/examples/decision_config.json)
 
-## Current Status
-
-Paper2Project currently has a strong production-oriented foundation:
-
-- architecture defined
-- backend scaffold implemented
-- agent contracts implemented
-- prompt templates written
-- code generator scaffold created
-- notebook generator scaffold created
-
-The next phase is operational hardening and live provider integration.
-
 ## Vision
 
-The long-term goal of Paper2Project is simple:
+The target workflow is straightforward:
 
-**Upload a paper, inspect the extracted pipeline, edit key decisions, generate a runnable ML project, and execute the notebook successfully.**
+**Upload a paper -> inspect the extracted pipeline -> edit decisions -> generate code -> run the notebook.**
 
-That is the workflow ML engineers, researchers, and builders actually need.
+That is the workflow this repository is built around.

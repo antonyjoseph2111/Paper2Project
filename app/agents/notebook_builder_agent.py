@@ -9,4 +9,12 @@ class NotebookBuilderAgent(Agent):
     name = "notebook_builder"
 
     def run(self, job: JobRecord, output_dir: Path, decision_config: DecisionConfig) -> str:
+        self.memory.append(
+            job,
+            self.name,
+            "internal",
+            "template-generator",
+            "system",
+            self.load_prompt(),
+        )
         return build_colab_notebook(job, output_dir, decision_config)

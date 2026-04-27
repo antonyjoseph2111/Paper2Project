@@ -9,5 +9,13 @@ class CodeGeneratorAgent(Agent):
     name = "code_generator"
 
     def run(self, job: JobRecord, output_dir: Path, decision_config: DecisionConfig) -> ArtifactManifest:
+        self.memory.append(
+            job,
+            self.name,
+            "internal",
+            "template-generator",
+            "system",
+            self.load_prompt(),
+        )
         files = build_generated_project(job, output_dir, decision_config)
         return ArtifactManifest(output_dir=str(output_dir), files=files, notebook_file="")

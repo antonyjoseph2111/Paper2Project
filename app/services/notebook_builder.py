@@ -8,58 +8,72 @@ from app.models.schemas import DecisionConfig, JobRecord
 
 
 def build_colab_notebook(job: JobRecord, output_dir: Path, decision_config: DecisionConfig) -> str:
-    notebook = nbf.v4.new_notebook()
     paper_title = job.parsed_paper.title if job.parsed_paper else "Unknown paper"
-    dataset_name = decision_config.dataset.selected
-    training = decision_config.training.model_dump()
+    notebook = nbf.v4.new_notebook(
+        metadata={
+            "colab": {"name": "paper2project_notebook.ipynb", "provenance": [], "gpuType": "T4"},
+            "accelerator": "GPU",
+            "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
+            "language_info": {"name": "python"},
+        }
+    )
+
+    def safe_read(filename: str) -> str:
+        path = output_dir / filename
+        if not path.exists():
+            return f"# Missing generated artifact: {filename}\n"
+        return path.read_text(encoding="utf-8")
+
+    model_py = safe_read("model.py")
+    data_loader_py = safe_read("data_loader.py")
+    train_py = safe_read("train.py")
+    config_yaml = safe_read("config.yaml")
 
     notebook.cells = [
-        nbf.v4.new_markdown_cell(f"# Paper2Project Notebook\n\nGenerated from **{paper_title}**."),
-        nbf.v4.new_code_cell("!pip install datasets torch pyyaml"),
+        nbf.v4.new_markdown_cell(
+            f"# Paper2Project Notebook\n\nGenerated from **{paper_title}**.\n\nThis notebook recreates the generated project files and runs the training pipeline in Colab."
+        ),
+        nbf.v4.new_markdown_cell(
+            "## Runtime recommendation\n\nUse **Runtime -> Change runtime type -> GPU** for faster training when the generated baseline supports it."
+        ),
+        nbf.v4.new_code_cell("!pip install -q torch torchvision datasets scikit-learn gymnasium pyyaml tensorboard wandb"),
         nbf.v4.new_code_cell(
-            "import random\nimport numpy as np\nimport torch\n\n"
-            f"SEED = {training['seed']}\n"
-            "random.seed(SEED)\nnp.random.seed(SEED)\ntorch.manual_seed(SEED)\n"
+            "from pathlib import Path\n"
+            "project_dir = Path('/content/paper2project_generated')\n"
+            "project_dir.mkdir(parents=True, exist_ok=True)\n"
+            "project_dir"
+        ),
+        nbf.v4.new_markdown_cell("## Recreate generated files"),
+        nbf.v4.new_code_cell(
+            "from pathlib import Path\n"
+            f"Path(project_dir / 'model.py').write_text({model_py!r}, encoding='utf-8')\n"
+            "print('model.py written')"
         ),
         nbf.v4.new_code_cell(
-            f"CONFIG = {training}\nDATASET_NAME = '{dataset_name}'\nprint(CONFIG)\nprint(DATASET_NAME)"
+            "from pathlib import Path\n"
+            f"Path(project_dir / 'data_loader.py').write_text({data_loader_py!r}, encoding='utf-8')\n"
+            "print('data_loader.py written')"
         ),
-        nbf.v4.new_markdown_cell("## Dataset download"),
         nbf.v4.new_code_cell(
-            "from datasets import load_dataset\n"
-            "dataset = load_dataset(DATASET_NAME)\n"
-            "dataset"
+            "from pathlib import Path\n"
+            f"Path(project_dir / 'train.py').write_text({train_py!r}, encoding='utf-8')\n"
+            "print('train.py written')"
         ),
-        nbf.v4.new_markdown_cell("## Model definition"),
         nbf.v4.new_code_cell(
-            "import torch\nfrom torch import nn\n\n"
-            "class PaperModel(nn.Module):\n"
-            "    def __init__(self, vocab_size=30522, embed_dim=128, num_classes=4):\n"
-            "        super().__init__()\n"
-            "        self.embedding = nn.Embedding(vocab_size, embed_dim)\n"
-            "        self.encoder = nn.GRU(embed_dim, embed_dim, batch_first=True)\n"
-            "        self.classifier = nn.Linear(embed_dim, num_classes)\n\n"
-            "    def forward(self, input_ids):\n"
-            "        embedded = self.embedding(input_ids)\n"
-            "        _, hidden = self.encoder(embedded)\n"
-            "        return self.classifier(hidden[-1])\n\n"
-            "model = PaperModel()\nmodel"
+            "from pathlib import Path\n"
+            f"Path(project_dir / 'config.yaml').write_text({config_yaml!r}, encoding='utf-8')\n"
+            "print('config.yaml written')"
         ),
-        nbf.v4.new_markdown_cell("## Training loop"),
         nbf.v4.new_code_cell(
-            "def simple_tokenizer(texts, max_length=128):\n"
-            "    rows = []\n"
-            "    for text in texts:\n"
-            "        tokens = [min(ord(ch), 255) for ch in text[:max_length]]\n"
-            "        tokens += [0] * (max_length - len(tokens))\n"
-            "        rows.append(tokens)\n"
-            "    return torch.tensor(rows, dtype=torch.long)\n\n"
-            "print('Tokenizer ready')"
+            "import os\n"
+            "os.chdir(project_dir)\n"
+            "print('Working directory:', os.getcwd())\n"
+            "print(sorted(path.name for path in Path('.').iterdir()))"
         ),
-        nbf.v4.new_markdown_cell("## Evaluation"),
-        nbf.v4.new_code_cell("print('Add evaluation logic here or import from generated project files.')"),
-        nbf.v4.new_markdown_cell("## Results visualization"),
-        nbf.v4.new_code_cell("print({'status': 'baseline notebook generated'})"),
+        nbf.v4.new_markdown_cell("## Inspect config"),
+        nbf.v4.new_code_cell("print(Path('config.yaml').read_text(encoding='utf-8'))"),
+        nbf.v4.new_markdown_cell("## Run training"),
+        nbf.v4.new_code_cell("!python train.py"),
     ]
 
     notebook_path = output_dir / "paper2project_notebook.ipynb"
