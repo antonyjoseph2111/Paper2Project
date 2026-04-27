@@ -4,6 +4,8 @@
 
 If you are looking for a **research paper to code generator**, **ML paper reproduction tool**, **paper to PyTorch project pipeline**, or **paper to Colab notebook workflow**, this project is built for exactly that problem.
 
+Paper2Project is also a practical answer to searches like **research paper implementation generator**, **AI paper to code**, **machine learning paper to project**, **paper reproduction with LLM agents**, and **paper to executable notebook**.
+
 Paper2Project helps bridge the gap between:
 
 - academic ML papers
@@ -44,6 +46,8 @@ Upload a machine learning paper PDF and the system will:
 5. Generate modular PyTorch files
 6. Generate a Google Colab notebook
 
+In short, Paper2Project works as a **research paper implementation assistant** for people who want to move from paper reading to actual model training code.
+
 ### Output Artifacts
 
 Paper2Project produces:
@@ -63,6 +67,13 @@ Paper2Project is useful for:
 - students learning from research implementations
 - founders building AI prototype pipelines
 - teams creating reproducible paper-to-code workflows
+
+This makes it relevant for anyone searching for:
+
+- how to implement a research paper in PyTorch
+- how to convert an ML paper into code
+- how to generate a Colab notebook from a paper
+- how to build a reproducible baseline from an AI paper
 
 ## Core Product Positioning
 
@@ -92,6 +103,7 @@ Paper2Project is not:
 - Graceful handling of ambiguous or incomplete papers
 - Colab-ready output
 - Production-oriented backend design with FastAPI
+- Architecture that maps well to real MLOps and ML engineering workflows
 
 ## End-to-End Workflow
 
@@ -237,6 +249,10 @@ Help students understand the path from paper methodology to real code.
 
 Allow research and engineering teams to evaluate new papers faster.
 
+### Paper-to-project automation
+
+Use a structured AI workflow to turn a PDF paper into a starter ML repository with training code, config, and notebook artifacts.
+
 ## Tech Stack
 
 Backend:
@@ -332,6 +348,8 @@ Update dataset, model, epochs, batch size, learning rate, or seed.
 
 Approve the decision config and generate the project files plus notebook.
 
+This API design makes Paper2Project suitable for a future **research paper to code SaaS**, an internal **ML research automation platform**, or a **developer tool for paper implementation workflows**.
+
 ## Quick Start
 
 ```bash
@@ -384,6 +402,36 @@ This project is relevant to searches around:
 - LLM agent for ML engineering
 - multi-agent research automation
 - reproducible ML project generation
+- research paper implementation generator
+- AI paper to executable code
+- machine learning paper to Colab notebook
+- PyTorch baseline generator from paper
+- paper to training pipeline
+- academic paper to MLOps workflow
+
+## Contributors
+
+Paper2Project is authored and directed by **Antony Joseph**.
+
+AI-assisted contribution and development support:
+
+- **OpenAI Codex** for architecture scaffolding, implementation support, and repository polish
+- **Claude** for AI-assisted ideation, refinement, and engineering collaboration
+
+This section is intended as an acknowledgement of AI-assisted development support in the project workflow.
+
+## Why This README Is Search-Friendly
+
+This README is intentionally written to be discoverable for developers, researchers, students, and founders looking for:
+
+- research paper implementation tools
+- paper reproduction workflows
+- multi-agent AI engineering systems
+- PyTorch starter code generation
+- Google Colab notebook generation
+- reproducible ML project scaffolding
+
+The goal is for Paper2Project to be understandable in the first few seconds and searchable across GitHub, Google, and AI tooling directories.
 
 ## Roadmap
 
